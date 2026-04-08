@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Aryan Verma - Full Stack Developer crafting modern, high-performance web experiences.">
+    <meta name="author" content="Aryan Verma">
+    <title>Aryan Verma | Full Stack Developer</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        /* Custom Tailwind Configuration */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            background-color: #0a0a0a;
+            font-family: 'Inter', system-ui, sans-serif;
+            overflow-x: hidden;
+        }
+        
+        /* Custom cursor */
+        .custom-cursor {
+            width: 8px;
+            height: 8px;
+            background: rgba(139, 92, 246, 0.8);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s ease;
+            transform: translate(-50%, -50%);
+            backdrop-filter: blur(2px);
+        }
+        
+        @media (max-width: 768px) {
+            .custom-cursor { display: none; }
+        }
+        
+        /* Glassmorphism */
+        .glass-card {
+            background: rgba(20, 20, 30, 0.55);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 2rem;
+            transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+        }
+        
+        .glass-card:hover {
+            border-color: rgba(139, 92, 246, 0.4);
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(139,92,246,0.2);
+            transform: translateY(-4px);
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #8b5cf6;
+            border-radius: 10px;
+        }
+        
+        /* Section title gradient */
+        .section-title {
+            background: linear-gradient(135deg, #FFFFFF 0%, #A78BFA 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid rgba(139, 92, 246, 0.3);
+            border-top-color: #8b5cf6;
+            border-radius: 50%;
+            animation: spin-slow 0.8s linear infinite;
+        }
+        
+        /* Smooth section transitions */
+        section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Navbar active link */
+        .nav-link.active {
+            color: #a78bfa;
+            border-bottom: 2px solid #a78bfa;
+            padding-bottom: 4px;
+        }
+        
+        /* Project card hover */
+        .project-card {
+            transition: all 0.4s cubic-bezier(0.2, 0, 0, 1);
+        }
+        
+        .project-card:hover {
+            transform: translateY(-8px) scale(1.02);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor" id="customCursor"></div>
+
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="fixed inset-0 bg-black flex items-center justify-center z-50 transition-opacity duration-500">
+        <div class="flex flex-col items-center">
+            <div class="loading-spinner"></div>
+            <p class="mt-6 text-white/70 font-mono tracking-wide text-sm">loading experience...</p>
+        </div>
+    </div>
+
+    <!-- Main Content (initially hidden) -->
+    <div id="mainContent" style="display: none;">
+        
+        <!-- Sticky Navbar -->
+        <nav class="fixed top-0 left-0 w-full z-50 py-4 px-6 md:px-12 bg-black/70 backdrop-blur-xl border-b border-white/10 transition-all">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <a href="#home" class="text-2xl font-display font-bold bg-gradient-to-r from-white to-purple-400 bg-clip-text text-transparent" style="font-family: 'Space Grotesk', monospace;">AV</a>
+                <div class="hidden md:flex gap-8 text-sm font-medium">
+                    <a href="#home" class="nav-link text-gray-300 hover:text-purple-400 transition capitalize" data-section="home">home</a>
+                    <a href="#about" class="nav-link text-gray-300 hover:text-purple-400 transition capitalize" data-section="about">about</a>
+                    <a href="#skills" class="nav-link text-gray-300 hover:text-purple-400 transition capitalize" data-section="skills">skills</a>
+                    <a href="#projects" class="nav-link text-gray-300 hover:text-purple-400 transition capitalize" data-section="projects">projects</a>
+                    <a href="#resume" class="nav-link text-gray-300 hover:text-purple-400 transition capitalize" data-section="resume">resume</a>
+                    <a href="#contact" class="nav-link text-gray-300 hover:text-purple-400 transition capitalize" data-section="contact">contact</a>
+                </div>
+                <button id="themeToggle" class="w-10 h-10 rounded-full glass-card flex items-center justify-center text-lg">
+                    <i class="fas fa-sun text-yellow-300"></i>
+                </button>
+            </div>
+        </nav>
+
+        <main>
+            <!-- HERO SECTION -->
+            <section id="home" class="min-h-screen flex items-center justify-center relative px-6 md:px-12 overflow-hidden pt-20">
+                <div class="absolute top-20 -left-20 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl animate-float"></div>
+                <div class="absolute bottom-20 right-10 w-80 h-80 bg-blue-600/20 rounded-full blur-3xl animate-float" style="animation-delay: 2s;"></div>
+                <div class="max-w-5xl mx-auto text-center z-10">
+                    <span class="inline-block px-4 py-1 rounded-full glass-card text-purple-300 text-sm font-mono mb-6 backdrop-blur-sm">✦ full stack craftsman ✦</span>
+                    <h1 class="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight bg-gradient-to-r from-white via-purple-200 to-purple-500 bg-clip-text text-transparent" style="font-family: 'Space Grotesk', monospace;">Hi, I'm Aryan Verma</h1>
+                    <p class="text-xl md:text-2xl text-gray-300 mt-6 max-w-2xl mx-auto">Full Stack Developer who builds modern, high-performance web experiences with a touch of art.</p>
+                    <div class="flex flex-wrap justify-center gap-5 mt-10">
+                        <a href="#projects" class="px-8 py-3 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 font-medium">View Projects <i class="fas fa-arrow-right ml-2"></i></a>
+                        <a href="#" id="downloadResumeBtn" class="px-8 py-3 rounded-full glass-card border border-white/20 hover:bg-white/10 transition-all font-medium">Download Resume <i class="fas fa-download ml-2"></i></a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ABOUT SECTION -->
+            <section id="about" class="py-24 px-6 md:px-12 max-w-6xl mx-auto">
+                <div class="glass-card p-8 md:p-12 rounded-3xl">
+                    <div class="flex flex-col md:flex-row gap-12 items-center">
+                        <div class="md:w-1/3 flex justify-center">
+                            <div class="relative w-48 h-48 md:w-64 md:h-64 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 p-1">
+                                <div class="w-full h-full rounded-full bg-black flex items-center justify-center text-6xl font-bold text-white" style="font-family: 'Space Grotesk', monospace;">AV</div>
+                            </div>
+                        </div>
+                        <div class="md:w-2/3">
+                            <h2 class="text-4xl font-display font-bold section-title mb-4" style="font-family: 'Space Grotesk', monospace;">About Me</h2>
+                            <p class="text-gray-300 leading-relaxed">I'm a 21-year-old Full Stack Developer and Computer Science student, passionate about blending minimal design with robust engineering. With 3+ years of hands-on experience building scalable web apps, I aim to craft digital solutions that are not only functional but delightful. When I'm not coding, I explore UI/UX trends and contribute to open source.</p>
+                            <div class="mt-6 flex flex-wrap gap-3">
+                                <span class="px-4 py-2 rounded-full bg-white/5 text-sm"><i class="fas fa-code mr-2 text-purple-400"></i> 40+ projects delivered</span>
+                                <span class="px-4 py-2 rounded-full bg-white/5 text-sm"><i class="fas fa-globe mr-2 text-purple-400"></i> Remote & freelance</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SKILLS SECTION -->
+            <section id="skills" class="py-20 px-6 md:px-12 max-w-6xl mx-auto">
+                <h2 class="text-4xl font-display font-bold text-center section-title mb-14" style="font-family: 'Space Grotesk', monospace;">Tech Arsenal</h2>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="glass-card p-6 rounded-2xl">
+                        <h3 class="text-xl font-bold flex items-center gap-2"><i class="fab fa-react text-cyan-400"></i> Frontend</h3>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-white/5 rounded-full text-sm">React</span>
+                            <span class="px-3 py-1 bg-white/5 rounded-full text-sm">Next.js</span>
+                            <span class="px-3 py-1 bg-white/5 rounded-full text-sm">TypeScript</span>
+                            <span class="px-3 py-1 bg-white/5 rounded-full text-sm">Tailwind CSS</span>
+                            <span class="px-3 py-1 bg-white/5 rounded-full text-sm">Framer Motion</span>
+                        </div>
+                    </div>
+                    <div class="glass-card p-6 rounded-2xl">
+                        <h3 class="text-xl font-bold flex items-center gap-2"><i class="fas fa-database text-green-400"></i> Backend</h3>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-white/5 rounded-full text-sm">Node.js</span>
+                            <span class="px-3 py-1 bg-white/5 rounded-full text-sm">Express</span>
+                            <span class="px-3 py-1 bg-white/5 rounded-full text-sm">Python</span>
+                            <span class="px-3 py-1 bg-white/5 rounded-full text-sm">GraphQL</span>
+                            <span class="px-3 py-1 bg-white/5 rounded-full text-sm">PostgreSQL</span>
+                        </div>
+                    </div>
+                    <div class="glass-card p-6 rounded-2xl">
+                        <h3 class="text-xl font-bold flex items-center gap-2"><i class="fas fa-tools text-orange-400"></i> Tools</h3>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-white/5 rounded-full text-sm">Git</span>
+                            <span class="px-3 py-1 bg-white/5 rounded-full text-sm">Docker</span>
+                            <span class="px-3 py-1 bg-white/5 rounded-full text-sm">VS Code</span>
+                            <span class="px-3 py-1 bg-white/5 rounded-full text-sm">Figma</span>
+                            <span class="px-3 py-1 bg-white/5 rounded-full text-sm">Vercel</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PROJECTS SECTION -->
+            <section id="projects" class="py-20 px-6 md:px-12 max-w-7xl mx-auto">
+                <h2 class="text-4xl font-display font-bold text-center section-title mb-14" style="font-family: 'Space Grotesk', monospace;">Featured Work</h2>
+                <div class="grid md:grid-cols-2 gap-8" id="projectsContainer"></div>
+            </section>
+
+            <!-- RESUME SECTION -->
+            <section id="resume" class="py-20 px-6 md:px-12 max-w-4xl mx-auto">
+                <div class="glass-card p-8 md:p-12 text-center rounded-3xl">
+                    <h2 class="text-4xl font-display font-bold section-title mb-4" style="font-family: 'Space Grotesk', monospace;">Resume Preview</h2>
+                    <p class="text-gray-300 max-w-xl mx-auto">Full Stack Developer with experience in modern JavaScript frameworks, cloud deployment, and team collaboration.</p>
+                    <div class="mt-8 flex justify-center">
+                        <a href="#" class="download-resume-btn inline-flex items-center gap-3 px-8 py-4 bg-purple-600 hover:bg-purple-700 rounded-full font-medium transition-all"><i class="fas fa-file-pdf"></i> Download PDF Resume</a>
+                    </div>
+                    <div class="mt-6 text-sm text-gray-400">📄 Available in PDF format • Updated March 2026</div>
+                </div>
+            </section>
+
+            <!-- CONTACT SECTION -->
+            <section id="contact" class="py-20 px-6 md:px-12 max-w-5xl mx-auto mb-16">
+                <div class="glass-card p-8 md:p-12 rounded-3xl">
+                    <h2 class="text-4xl font-display font-bold section-title text-center mb-8" style="font-family: 'Space Grotesk', monospace;">Let's Connect</h2>
+                    <div class="grid md:grid-cols-2 gap-10">
+                        <div>
+                            <p class="text-gray-300 mb-6">Have a project in mind or just want to chat? Feel free to drop a message!</p>
+                            <div class="flex flex-col gap-4">
+                                <a href="#" class="flex items-center gap-3 text-gray-200 hover:text-purple-400 transition"><i class="fab fa-github text-2xl"></i> github.com/aryanverma</a>
+                                <a href="#" class="flex items-center gap-3 text-gray-200 hover:text-purple-400 transition"><i class="fab fa-linkedin text-2xl"></i> linkedin.com/in/aryan-verma</a>
+                                <a href="#" class="flex items-center gap-3 text-gray-200 hover:text-purple-400 transition"><i class="fas fa-envelope text-2xl"></i> aryan@devportfolio.com</a>
+                            </div>
+                        </div>
+                        <form id="contactForm" class="flex flex-col gap-4">
+                            <input type="text" name="name" placeholder="Your name" class="bg-white/5 border border-white/10 rounded-xl p-3 focus:outline-none focus:border-purple-500 transition" required>
+                            <input type="email" name="email" placeholder="Email address" class="bg-white/5 border border-white/10 rounded-xl p-3 focus:outline-none focus:border-purple-500 transition" required>
+                            <textarea name="message" rows="4" placeholder="Message..." class="bg-white/5 border border-white/10 rounded-xl p-3 focus:outline-none focus:border-purple-500 transition" required></textarea>
+                            <button type="submit" class="bg-purple-600 hover:bg-purple-700 py-3 rounded-xl font-medium transition-all">Send Message <i class="fas fa-paper-plane ml-2"></i></button>
+                            <div id="formStatus" class="text-center text-sm"></div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Scroll to top button -->
+        <button id="scrollToTop" class="fixed bottom-8 right-8 w-12 h-12 rounded-full glass-card backdrop-blur-lg flex items-center justify-center text-purple-400 hover:text-white transition-all z-40 shadow-lg">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+
+        <footer class="text-center py-8 border-t border-white/5 text-gray-500 text-sm">
+            © 2026 Aryan Verma — Built with HTML, Tailwind & vanilla JS. All visions crafted.
+        </footer>
+    </div>
+
+    <script>
+        // Projects data
+        const projectsData = [
+            {
+                id: 1,
+                title: "Nebula AI Dashboard",
+                description: "Intelligent analytics dashboard with real-time AI predictions and interactive graphs. Integrated OpenAI API and WebSockets.",
+                tech: ["React", "Node.js", "Tailwind", "TensorFlow.js"],
+                live: "#",
+                github: "#",
+                bgGradient: "from-indigo-900/40 to-purple-900/30"
+            },
+            {
+                id: 2,
+                title: "VoyageXR - Travel Platform",
+                description: "Modern travel booking platform with 3D interactive maps, user authentication, and dynamic itinerary builder.",
+                tech: ["Next.js", "MongoDB", "Framer", "Mapbox"],
+                live: "#",
+                github: "#",
+                bgGradient: "from-blue-900/40 to-cyan-800/30"
+            },
+            {
+                id: 3,
+                title: "CodeCanvas Editor",
+                description: "Collaborative code editor with syntax highlighting, real-time sync, and built-in terminal emulator.",
+                tech: ["React", "Socket.io", "Express", "Monaco"],
+                live: "#",
+                github: "#",
+                bgGradient: "from-emerald-900/40 to-teal-800/30"
+            },
+            {
+                id: 4,
+                title: "Finwise Portfolio Tracker",
+                description: "Personal finance dashboard to track investments, visualize net worth, and get market insights.",
+                tech: ["Vue.js", "D3.js", "FastAPI", "PostgreSQL"],
+                live: "#",
+                github: "#",
+                bgGradient: "from-amber-900/40 to-orange-800/30"
+            }
+        ];
+
+        // Render projects
+        function renderProjects() {
+            const container = document.getElementById('projectsContainer');
+            if (!container) return;
+            
+            container.innerHTML = projectsData.map(project => `
+                <div class="glass-card overflow-hidden rounded-2xl project-card transition-all duration-500">
+                    <div class="h-48 w-full bg-gradient-to-br ${project.bgGradient} flex items-center justify-center text-5xl">
+                        <i class="fas fa-laptop-code text-white/70"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-display font-bold" style="font-family: 'Space Grotesk', monospace;">${project.title}</h3>
+                        <p class="text-gray-400 text-sm mt-2">${project.description}</p>
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            ${project.tech.map(tech => `<span class="text-xs px-2 py-1 rounded-full bg-purple-500/20 text-purple-300">${tech}</span>`).join('')}
+                        </div>
+                        <div class="flex gap-5 mt-6">
+                            <a href="${project.live}" class="text-sm flex items-center gap-1 text-white/80 hover:text-purple-400 transition"><i class="fas fa-external-link-alt"></i> Live Demo</a>
+                            <a href="${project.github}" class="text-sm flex items-center gap-1 text-white/80 hover:text-purple-400 transition"><i class="fab fa-github"></i> GitHub</a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Scroll reveal animation
+        function revealSections() {
+            const sections = document.querySelectorAll('section');
+            sections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                const windowHeight = window.innerHeight;
+                if (rect.top < windowHeight - 100) {
+                    section.classList.add('visible');
+                }
+            });
+        }
+
+        // Navbar active link highlighting
+        function updateActiveNav() {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (window.scrollY >= sectionTop - 150) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('data-section') === current) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            renderProjects();
+            
+            // Simulate loading
+            setTimeout(() => {
+                const loadingScreen = document.getElementById('loadingScreen');
+                const mainContent = document.getElementById('mainContent');
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                    mainContent.style.display = 'block';
+                    revealSections();
+                }, 500);
+            }, 800);
+            
+            // Scroll event listeners
+            window.addEventListener('scroll', () => {
+                revealSections();
+                updateActiveNav();
+            });
+            
+            // Smooth scroll for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    if (href === '#') return;
+                    const target = document.querySelector(href);
+                    if (target) {
+                        e.preventDefault();
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // Scroll to top button
+            const scrollBtn = document.getElementById('scrollToTop');
+            scrollBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            
+            // Contact form handler
+            const form = document.getElementById('contactForm');
+            const formStatus = document.getElementById('formStatus');
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = form.name.value;
+                const email = form.email.value;
+                const message = form.message.value;
+                
+                if (name && email && message) {
+                    formStatus.innerHTML = '<span class="text-green-400">✨ Message sent successfully! (Demo)</span>';
+                    form.reset();
+                    setTimeout(() => { formStatus.innerHTML = ''; }, 3000);
+                } else {
+                    formStatus.innerHTML = '<span class="text-red-400">Please fill all fields.</span>';
+                    setTimeout(() => { formStatus.innerHTML = ''; }, 2500);
+                }
+            });
+            
+            // Theme toggle (light/dark)
+            let isDark = true;
+            const themeBtn = document.getElementById('themeToggle');
+            themeBtn.addEventListener('click', () => {
+                if (isDark) {
+                    document.body.style.backgroundColor = '#f5f5f5';
+                    document.body.style.color = '#111';
+                    themeBtn.innerHTML = '<i class="fas fa-moon text-indigo-300"></i>';
+                } else {
+                    document.body.style.backgroundColor = '#0a0a0a';
+                    document.body.style.color = '#e5e5e5';
+                    themeBtn.innerHTML = '<i class="fas fa-sun text-yellow-300"></i>';
+                }
+                isDark = !isDark;
+            });
+            
+            // Custom cursor
+            const cursor = document.getElementById('customCursor');
+            document.addEventListener('mousemove', (e) => {
+                if (cursor) {
+                    cursor.style.left = e.clientX + 'px';
+                    cursor.style.top = e.clientY + 'px';
+                }
+            });
+            
+            // Download resume buttons
+            const downloadBtns = document.querySelectorAll('#downloadResumeBtn, .download-resume-btn');
+            downloadBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    alert('Resume download would start here. (Demo version)');
+                });
+            });
+            
+            updateActiveNav();
+        });
+    </script>
+</body>
+</html>
